@@ -7,18 +7,33 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background-color: #0c1017; color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .modal { background-color: rgba(12, 16, 23, 0.95); backdrop-filter: blur(8px); }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
         
+        <!-- Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-5 mb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-amber-500 tracking-wide">CRYSTAL AI SIGNAL ENGINE</h1>
-                <p class="text-xs text-gray-400 mt-1">Multi-Asset TradingView API Integration Dashboard</p>
+                <div class="flex items-center gap-3 mt-1">
+                    <p class="text-xs text-gray-400">Multi-Asset TradingView API Integration Dashboard</p>
+                    <span id="user-status-badge" class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/20 font-bold">FREE TRIAL</span>
+                </div>
             </div>
             
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap md:flex-nowrap">
+                <!-- 📢 Telegram Support Button -->
+                <a href="https://t.me/miafd150" target="_blank" class="flex items-center gap-2 bg-sky-600/10 hover:bg-sky-600/20 text-sky-400 text-xs font-bold px-4 py-2 rounded-lg border border-sky-500/20 transition cursor-pointer">
+                    ✈️ Support (@miafd150)
+                </a>
+
+                <!-- ⚙️ Admin Settings Button -->
+                <button onclick="openAdminModal()" class="bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-amber-500 p-2 rounded-lg border border-gray-800 transition cursor-pointer" title="Admin Settings">
+                    ⚙️
+                </button>
+
                 <label class="text-xs font-bold text-gray-400 uppercase">Select Market:</label>
                 <select id="asset-selector" onchange="changeAsset()" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-500 cursor-pointer">
                     <option value="BINANCE:BTCUSDT">BTC/USD (Bitcoin)</option>
@@ -58,7 +73,15 @@
 
             <div class="space-y-6">
                 
-                <div id="panel-binary" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4">
+                <div id="panel-binary" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 relative overflow-hidden">
+                    <!-- 🔒 Paywall Lock Layer -->
+                    <div id="binary-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
+                        <span class="text-4xl mb-2">🔒</span>
+                        <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Free Limit Expired!</h3>
+                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">আপনার ১টি ফ্রি টোকেন সিগন্যাল শেষ। সিগন্যালটি লস হয়ে থাকলে টেলিগ্রাম সাপোর্ট প্রুফ দিয়ে আরেকটি টোকেন নিন অথবা নিচের প্রিমিয়াম প্যাকেজ কিনুন।</p>
+                        <button onclick="openWalletModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-gray-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer">💼 Buy Premium Package</button>
+                    </div>
+
                     <h2 class="font-bold text-sm text-gray-400 uppercase tracking-widest">Binary Mode Status</h2>
                     
                     <div class="grid grid-cols-3 gap-2">
@@ -79,7 +102,15 @@
                     </div>
                 </div>
 
-                <div id="panel-forex" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 hidden">
+                <div id="panel-forex" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 hidden relative overflow-hidden">
+                    <!-- 🔒 Paywall Lock Layer Forex -->
+                    <div id="forex-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
+                        <span class="text-4xl mb-2">🔒</span>
+                        <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Premium Feature</h3>
+                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">ফরেক্স পজিশন প্যারামিটার এবং টার্গেট সিগন্যাল দেখতে প্রিমিয়াম প্যাকেজ একটিভ করুন।</p>
+                        <button onclick="openWalletModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-gray-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer">💼 Buy Premium Package</button>
+                    </div>
+
                     <h2 class="font-bold text-sm text-gray-400 uppercase tracking-widest">Forex Position Parameters</h2>
                     <div class="p-4 bg-gray-950 rounded-xl border border-gray-800 space-y-3">
                         <div class="flex justify-between text-xs text-gray-400"><span>SIGNAL STATUS:</span> <span id="fx-type" class="font-bold text-amber-500">SCANNING...</span></div>
@@ -95,6 +126,122 @@
 
     </div>
 
+    <!-- 💳 Wallet / Payment Gateways Modal -->
+    <div id="wallet-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeWalletModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
+            <h2 class="text-lg font-black text-amber-500 tracking-wider uppercase">💎 Crystal Store & Gateway</h2>
+            <p class="text-xs text-gray-400">আপনার পছন্দের প্ল্যান সিলেক্ট করে পেমেন্ট রিকোয়েস্ট পাঠান। এডমিন আইডি ভেরিফাই করে ১-১০ মিনিটের মধ্যে সিগন্যাল একটিভ করে দিবে।</p>
+            
+            <!-- Packages Dropdown -->
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-gray-400 uppercase">Select Plan:</label>
+                <select id="pack-selector" onchange="updateAmount()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 text-xs font-bold text-gray-200 focus:outline-none focus:border-amber-500">
+                    <option value="100">1 Day Access — 100 BDT</option>
+                    <option value="180">2 Day Access — 180 BDT</option>
+                    <option value="250">3 Day Access — 250 BDT</option>
+                    <option value="500">1 Week Access — 500 BDT</option>
+                </select>
+            </div>
+
+            <!-- Payment Gateways Buttons -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="selectGateway('bkash')" class="bg-pink-700/10 hover:bg-pink-700/20 text-pink-400 font-bold py-2.5 rounded-xl border border-pink-500/20 text-xs transition cursor-pointer">
+                    ৳ bKash Send Money
+                </button>
+                <button onclick="selectGateway('nagad')" class="bg-orange-600/10 hover:bg-orange-600/20 text-orange-400 font-bold py-2.5 rounded-xl border border-orange-500/20 text-xs transition cursor-pointer">
+                    ৳ Nagad Send Money
+                </button>
+            </div>
+
+            <!-- Form Gateway (Dynamic) -->
+            <div id="gateway-panel" class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-3 hidden">
+                <div class="text-center pb-2 border-b border-gray-900">
+                    <span id="gateway-title" class="text-xs font-black tracking-wider uppercase"></span>
+                    <p id="gateway-number" class="text-sm font-mono text-amber-400 font-bold mt-0.5 select-all"></p>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div>
+                        <label class="text-[10px] font-mono text-gray-500 block mb-1">Target Amount (BDT):</label>
+                        <input id="pay-amount" type="number" readonly class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-gray-300 font-mono focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-mono text-gray-400 block mb-1">Your TrxID (ট্রানজেকশন আইডি):</label>
+                        <input id="pay-trx" type="text" placeholder="Ex: BAF56X89Z" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-amber-400 font-mono uppercase focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="submitOrder()" class="w-full bg-amber-500 text-gray-950 font-bold py-2 rounded-lg text-xs tracking-wider uppercase mt-2 cursor-pointer">Submit Request Money</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔐 Admin Authentication Panel Modal -->
+    <div id="admin-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
+            
+            <!-- Admin Login Form -->
+            <div id="admin-login-view" class="space-y-4">
+                <h2 class="text-lg font-black text-amber-500 uppercase tracking-wider">🔒 Admin Terminal Gate</h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-gray-400 mb-1">Username:</label>
+                        <input id="adm-user" type="text" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1">Password:</label>
+                        <input id="adm-pass" type="password" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="loginAdmin()" class="w-full bg-amber-500 text-gray-950 font-bold py-2 rounded-xl text-xs uppercase mt-2 cursor-pointer">Authorize & Login</button>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard Console (Hidden by default) -->
+            <div id="admin-dashboard-view" class="space-y-4 hidden">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                    <h2 class="text-md font-black text-green-400 uppercase tracking-wider">💻 Core Control Command</h2>
+                    <button onclick="logoutAdmin()" class="text-[10px] bg-red-500/10 text-red-400 px-3 py-1 rounded-md border border-red-500/20 font-bold cursor-pointer">LOGOUT</button>
+                </div>
+                
+                <!-- Quick User Override Section -->
+                <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase">⚡ Manual Package Upgrade Console</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                        <input id="target-uid" type="text" readonly value="Current Web User" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-gray-400 font-mono">
+                        <select id="target-pack" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-amber-400 font-bold">
+                            <option value="free">Free Account (1 Token)</option>
+                            <option value="extra_free">Extended Trial (+1 Signal)</option>
+                            <option value="premium">Premium Pack (Unlimited)</option>
+                        </select>
+                        <button onclick="upgradeUserDirect()" class="bg-green-600 text-white font-bold px-3 py-2 rounded-lg hover:bg-green-500 cursor-pointer">Upgrade Package</button>
+                    </div>
+                </div>
+
+                <!-- Live Orders Monitor -->
+                <div class="space-y-2">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase">📋 Incoming Payment Order Logs</h3>
+                    <div class="max-h-48 overflow-y-auto border border-gray-800 rounded-xl bg-gray-950">
+                        <table class="w-full text-[11px] text-left">
+                            <thead class="bg-gray-900 text-gray-400 font-mono uppercase text-[9px] border-b border-gray-800">
+                                <tr>
+                                    <th class="p-2.5">User Code</th>
+                                    <th class="p-2.5">Gateway</th>
+                                    <th class="p-2.5">Price</th>
+                                    <th class="p-2.5">Transaction ID</th>
+                                    <th class="p-2.5">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-logs-rows" class="divide-y divide-gray-900 text-gray-300 font-mono">
+                                <!-- Order logs loop injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
@@ -103,6 +250,18 @@
         let activeMode = "binary";
         let scanCountdown = 15;
         let selectedTimeframe = 1;
+        let activeGateway = "";
+
+        // 🆔 Unique Client ID Engine ( ডাটা ট্র্যাকিং এর জন্য ব্রাউজার আইডি )
+        let userUID = localStorage.getItem('crystal_uid');
+        if (!userUID) {
+            userUID = 'CRYS-' + Math.floor(100000 + Math.random() * 900000);
+            localStorage.setItem('crystal_uid', userUID);
+        }
+
+        // 💎 Subscription Database Core State
+        let signalCount = parseInt(localStorage.getItem('crystal_signals_used') || '0');
+        let currentPack = localStorage.getItem('crystal_pack') || 'free'; // options: free, extra_free, premium
 
         // 🧠 TradingView Widget API লোড করার মেইন ফাংশন
         function loadTradingViewAPI(symbolName) {
@@ -112,10 +271,10 @@
                 "width": "100%",
                 "height": 460,
                 "symbol": symbolName,
-                "interval": "1", // ক্যান্ডেলের টাইমফ্রেম (১ মিনিট)
+                "interval": "1", 
                 "timezone": "Etc/UTC",
                 "theme": "dark",
-                "style": "1", // জাপানিজ ক্যান্ডেলস্টিক স্টাইল
+                "style": "1", 
                 "locale": "en",
                 "toolbar_bg": "#090d14",
                 "enable_publishing": false,
@@ -125,14 +284,14 @@
             });
         }
 
-        // 🔄 ড্রপডাউন মেনু চেঞ্জ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
+        // 🔄 ড্রপডাউন মেনু চেদ্ধ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
         function changeAsset() {
             currentAsset = document.getElementById('asset-selector').value;
             const selectedText = document.getElementById('asset-selector').options[document.getElementById('asset-selector').selectedIndex].text;
             document.getElementById('chart-title').innerText = `${selectedText.split(' ')[0]} Live Chart`;
             
             loadTradingViewAPI(currentAsset);
-            processAlgos(); // অ্যাসেট বদলালে ইনস্ট্যান্ট সিগন্যাল রি-অ্যানালিসিস হবে
+            processAlgos(); 
         }
 
         // 🔀 ইন্টারফেস মোড সুইচ লজিক (Binary <-> Forex)
@@ -154,6 +313,7 @@
                 panelForex.classList.remove('hidden');
                 panelBinary.classList.add('hidden');
             }
+            checkSubscriptionGate();
         }
 
         // ⏱️ বাইনারি এক্সপায়ারি টাইম কন্ট্রোলার
@@ -166,15 +326,48 @@
             processAlgos();
         }
 
+        // 🔒 Paywall Security Enforcement Logic
+        function checkSubscriptionGate() {
+            const binPaywall = document.getElementById('binary-paywall');
+            const fxPaywall = document.getElementById('forex-paywall');
+            const statusBadge = document.getElementById('user-status-badge');
+
+            // Update UI status context
+            if (currentPack === 'premium') {
+                statusBadge.innerText = "PREMIUM VIP";
+                statusBadge.className = "text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-md border border-green-500/20 font-bold";
+                binPaywall.style.display = "none";
+                fxPaywall.style.display = "none";
+            } else if (currentPack === 'extra_free') {
+                statusBadge.innerText = "EXTRA TRIAL ACTIVE";
+                statusBadge.className = "text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-md border border-sky-500/20 font-bold";
+                fxPaywall.style.display = "flex"; // Forex standard premium blocks
+                if (signalCount >= 2) {
+                    binPaywall.style.display = "flex";
+                } else {
+                    binPaywall.style.display = "none";
+                }
+            } else {
+                // Default System Mode (1 Free Signal Only)
+                statusBadge.innerText = "FREE TRIAL";
+                statusBadge.className = "text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/20 font-bold";
+                fxPaywall.style.display = "flex";
+                if (signalCount >= 1) {
+                    binPaywall.style.display = "flex";
+                } else {
+                    binPaywall.style.display = "none";
+                }
+            }
+        }
+
         // 🧠 Crystal AI Pure Quantitative Analysis Engine & Filter
         function processAlgos() {
             if (typeof currentAsset === 'undefined') return;
 
             // ৯০% এক্যুরেসি ফিল্টার লজিক (৮৪% থেকে ৯৫% এর মধ্যে প্রোবাবিলিটি জেনারেশন)
             const computedConfidence = Math.floor(Math.random() * (95 - 84 + 1)) + 84; 
-            const isBuyDominant = Math.random() > 0.5; // বুলিশ বনাম বেয়ারিশ প্রেসার অ্যানালিসিস
+            const isBuyDominant = Math.random() > 0.5; 
             
-            // লাইভ অ্যাসেট প্রাইস ম্যাপিং
             let basePrice = 67320.50;
             let decimals = 2;
             if (currentAsset.includes("EURUSD")) { basePrice = 1.0845; decimals = 4; }
@@ -184,7 +377,6 @@
             
             const currentMockPrice = (basePrice + (Math.random() - 0.5) * (basePrice * 0.002)).toFixed(decimals);
 
-            // DOM Elements
             const binSignalElement = document.getElementById('binary-signal');
             const binConfElement = document.getElementById('binary-conf');
             const binExpElement = document.getElementById('binary-exp');
@@ -194,10 +386,7 @@
             const fxSlElement = document.getElementById('fx-sl');
             const fxTpElement = document.getElementById('fx-tp');
 
-            // 🛑 STRICT RULE FILTER: এক্যুরেসি ৯০% এর নিচে (৮৯% বা কম) হলে ট্রেড ব্লক হবে
             if (computedConfidence < 90) {
-                
-                // ১. বাইনারি অপশন ব্লক স্ক্রিন রেডি করা
                 if (binSignalElement) {
                     binSignalElement.innerText = "WAIT FOR HIGH WIN-RATE SETUP";
                     binSignalElement.className = "text-sm font-bold text-amber-500/70 p-2 bg-amber-500/5 rounded-lg border border-amber-500/10 tracking-wider";
@@ -208,7 +397,6 @@
                 }
                 if (binExpElement) binExpElement.innerText = "NO TRADE";
 
-                // ২. ফরেক্স প্যানেল ব্লক স্ক্রিন রেডি করা
                 if (fxTypeElement) {
                     fxTypeElement.innerText = "NO TRADE SETUP";
                     fxTypeElement.className = "font-bold text-gray-500";
@@ -221,13 +409,11 @@
                 if (fxSlElement) fxSlElement.innerText = "0.00";
                 if (fxTpElement) fxTpElement.innerText = "0.00";
             } 
-            // 🔥 GOLDEN TRIGGER: এক্যুরেসি যখনই ৯০% বা তার বেশি হবে
             else {
                 const signalDirection = isBuyDominant ? "CALL (UP)" : "PUT (DOWN)";
                 const forexDirection = isBuyDominant ? "BUY (LONG)" : "SELL (SHORT)";
                 const expiryText = (typeof selectedTimeframe !== 'undefined') ? selectedTimeframe + " Min" : "1 Min";
 
-                // ১. বাইনারি সিগন্যাল স্ক্রিনে পুশ
                 if (binSignalElement) {
                     binSignalElement.innerText = signalDirection;
                     binSignalElement.className = `text-3xl font-black ${isBuyDominant ? 'text-green-400' : 'text-red-400'} tracking-widest bg-gray-900 py-3 rounded-xl border border-gray-800`;
@@ -238,7 +424,6 @@
                 }
                 if (binExpElement) binExpElement.innerText = expiryText;
 
-                // ২. ফরেক্স সিগন্যাল ও রিস্ক ম্যানেজমেন্ট প্যারামিটার পুশ
                 if (fxTypeElement) {
                     fxTypeElement.innerText = forexDirection;
                     fxTypeElement.className = `font-bold ${isBuyDominant ? 'text-green-400' : 'text-red-400'}`;
@@ -260,6 +445,140 @@
             }
         }
 
+        // 💳 Wallet Interface Logic Engine
+        function openWalletModal() { document.getElementById('wallet-modal').classList.remove('hidden'); updateAmount(); }
+        function closeWalletModal() { document.getElementById('wallet-modal').classList.add('hidden'); }
+        
+        function updateAmount() {
+            const selection = document.getElementById('pack-selector').value;
+            document.getElementById('pay-amount').value = selection;
+        }
+
+        function selectGateway(type) {
+            activeGateway = type;
+            const panel = document.getElementById('gateway-panel');
+            const title = document.getElementById('gateway-title');
+            const number = document.getElementById('gateway-number');
+
+            panel.classList.remove('hidden');
+            if (type === 'bkash') {
+                title.innerText = "BKASH SEND MONEY";
+                number.innerText = "BKASH PERSONAL: 01941063121";
+            } else {
+                title.innerText = "NAGAD SEND MONEY";
+                number.innerText = "NAGAD PERSONAL: 01604192939";
+            }
+        }
+
+        function submitOrder() {
+            const amount = document.getElementById('pay-amount').value;
+            const trx = document.getElementById('pay-trx').value.trim();
+
+            if (!trx) {
+                alert("দয়া করে সঠিক বিকাশ/নগদ TrxID প্রদান করুন!");
+                return;
+            }
+
+            // Retrieve database orders pool
+            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
+            orders.push({
+                uid: userUID,
+                gateway: activeGateway.toUpperCase(),
+                price: amount,
+                trxid: trx,
+                timestamp: new Date().toLocaleTimeString()
+            });
+
+            localStorage.setItem('crystal_orders_pool', JSON.stringify(orders));
+            alert("আপনার রিকোয়েস্ট অ্যাডমিন প্যানেলে পাঠানো হয়েছে! অনুগ্রহ করে ১-১০ মিনিট অপেক্ষা করুন।");
+            document.getElementById('pay-trx').value = "";
+            closeWalletModal();
+        }
+
+        // 🔐 Admin Core Panel Subsystems
+        function openAdminModal() { 
+            document.getElementById('admin-modal').classList.remove('hidden'); 
+            document.getElementById('target-uid').value = `User: ${userUID}`;
+        }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+        function loginAdmin() {
+            const user = document.getElementById('adm-user').value;
+            const pass = document.getElementById('adm-pass').value;
+
+            // 🔐 Secure Admin Auth Update
+            if (user === 'admin' && pass === 'FhDMunPoly@510') {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-dashboard-view').classList.remove('hidden');
+                renderAdminLogs();
+            } else {
+                alert("ভুল এডমিন ক্রেডেনশিয়াল!");
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            document.getElementById('admin-dashboard-view').classList.add('hidden');
+            document.getElementById('adm-user').value = "";
+            document.getElementById('adm-pass').value = "";
+        }
+
+        function renderAdminLogs() {
+            const container = document.getElementById('order-logs-rows');
+            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">No pending transactions found.</td></tr>`;
+                return;
+            }
+
+            container.innerHTML = orders.map((ord, idx) => `
+                <tr class="hover:bg-gray-900 transition">
+                    <td class="p-2.5 text-amber-400 font-bold">${ord.uid}</td>
+                    <td class="p-2.5">${ord.gateway}</td>
+                    <td class="p-2.5 text-green-400">${ord.price} BDT</td>
+                    <td class="p-2.5 text-gray-400 select-all">${ord.trxid}</td>
+                    <td class="p-2.5">
+                        <button onclick="approveOrder('${ord.uid}', ${idx})" class="bg-green-600 hover:bg-green-500 text-gray-950 px-2 py-1 rounded text-[10px] font-black cursor-pointer">APPROVE VIP</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function approveOrder(targetUID, index) {
+            // If the transaction matches current client session override state
+            if (targetUID === userUID) {
+                currentPack = 'premium';
+                localStorage.setItem('crystal_pack', 'premium');
+                checkSubscriptionGate();
+            }
+            
+            // Slice approved transaction out of storage
+            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
+            orders.splice(index, 1);
+            localStorage.setItem('crystal_orders_pool', JSON.stringify(orders));
+            
+            renderAdminLogs();
+            alert(`User ${targetUID} successfully upgraded to Premium!`);
+        }
+
+        function upgradeUserDirect() {
+            const packSelection = document.getElementById('target-pack').value;
+            currentPack = packSelection;
+            localStorage.setItem('crystal_pack', packSelection);
+            
+            if (packSelection === 'free') {
+                signalCount = 0;
+                localStorage.setItem('crystal_signals_used', '0');
+            } else if (packSelection === 'extra_free') {
+                signalCount = 0; // Reset counter for additional trial frame
+                localStorage.setItem('crystal_signals_used', '0');
+            }
+
+            checkSubscriptionGate();
+            alert(`প্যাকেজ ম্যানুয়ালি আপডেট করা হয়েছে: ${packSelection.toUpperCase()}`);
+        }
+
         // ব্যাকগ্রাউন্ড স্ক্যানিং লুপ টাইমার (১৫ সেকেন্ড কাউন্টডাউন)
         setInterval(() => {
             const timerElement = document.getElementById('timer');
@@ -268,6 +587,14 @@
                 if (timerElement) timerElement.innerText = `${scanCountdown}s`;
             } else {
                 scanCountdown = 15;
+                
+                // Track signal generation quota limit
+                if (currentPack !== 'premium') {
+                    signalCount++;
+                    localStorage.setItem('crystal_signals_used', signalCount);
+                    checkSubscriptionGate();
+                }
+
                 processAlgos(); 
             }
         }, 1000);
@@ -275,6 +602,7 @@
         // ব্রাউজারে পেজটি প্রথমবার লোড হওয়ার সাথে সাথে সিস্টেম বুট হবে
         window.onload = function() {
             loadTradingViewAPI(currentAsset);
+            checkSubscriptionGate();
             processAlgos();
         };
     </script>
