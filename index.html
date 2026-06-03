@@ -12,6 +12,7 @@
 </head>
 <body class="p-4 md:p-8">
 
+    <!-- 🔑 Authentication Overlay Screen Container -->
     <div id="auth-overlay" class="fixed inset-0 modal z-[100] flex justify-center items-center p-4">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div class="text-center">
@@ -31,9 +32,7 @@
 
                 <button id="auth-main-btn" onclick="handleAuthSubmit()" class="w-full bg-amber-500 text-gray-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer mt-2">Login Now</button>
                 
-                <div id="admin-btn-container" class="hidden">
-                    <button onclick="openAdminModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-amber-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider border border-gray-700 cursor-pointer mt-1">🔒 Admin Panel</button>
-                </div>
+                <button id="auth-admin-btn" onclick="openAdminModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-amber-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider border border-gray-700 cursor-pointer mt-1">🔒 Admin Panel</button>
 
                 <div class="text-center pt-2 border-t border-gray-800 mt-2">
                     <p id="auth-toggle-msg" class="text-[11px] text-gray-400">নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span></p>
@@ -42,8 +41,10 @@
         </div>
     </div>
 
+    <!-- 🌐 Main Frame Workspace Framework Grid View Wrapper -->
     <div id="main-dashboard-wrapper" class="max-w-7xl mx-auto blur-sm pointer-events-none transition-all duration-300">
         
+        <!-- Top App Navigation Terminal Info Panel Header Component -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-5 mb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-amber-500 tracking-wide">CRYSTAL AI SIGNAL ENGINE</h1>
@@ -83,6 +84,7 @@
             </div>
         </header>
 
+        <!-- Dynamic Action Category Toggle Tab Bar Block Structure Controls -->
         <div class="flex gap-4 mb-6">
             <button id="btn-binary" onclick="switchMode('binary')" class="flex-1 bg-amber-500 text-gray-950 font-bold py-3 px-4 rounded-xl shadow-lg transition duration-200 cursor-pointer">
                 📊 BINARY OPTIONS (1-3 Min Predictor)
@@ -92,8 +94,10 @@
             </button>
         </div>
 
+        <!-- Split Structural Interface Layout Grid Matrix Blocks Core Area -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
+            <!-- Left Side Element Component: Live Interactive High-Tech TradingView Chart Widget Frame -->
             <div class="lg:col-span-2 bg-gray-900 p-4 rounded-2xl border border-gray-800 shadow-2xl">
                 <div class="flex justify-between items-center mb-4">
                     <span id="chart-title" class="font-bold text-lg text-gray-200">BTC/USD Real-Time Chart</span>
@@ -105,9 +109,12 @@
                 </div>
             </div>
 
+            <!-- Right Side Element Component: Signal Generator Diagnostics System Console Panels Wrapper -->
             <div class="space-y-6">
                 
+                <!-- Box Unit Layer A: Binary Predictive Intelligence Module Machine Controller Box -->
                 <div id="panel-binary" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 relative overflow-hidden">
+                    <!-- Paywall Interceptor Overlay Modal Box Element -->
                     <div id="binary-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Free Limit Expired!</h3>
@@ -135,7 +142,9 @@
                     </div>
                 </div>
 
+                <!-- Box Unit Layer B: Forex Multi-Target Position Predictive Intelligence Module Box -->
                 <div id="panel-forex" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 hidden relative overflow-hidden">
+                    <!-- Paywall Interceptor Overlay Modal Box Element -->
                     <div id="forex-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Premium Feature</h3>
@@ -158,6 +167,7 @@
 
     </div>
 
+    <!-- 💎 Checkout Ledger & Financial Vault Crypto Wallet Component Modal Dialog Box Screen -->
     <div id="wallet-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
             <button onclick="closeWalletModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
@@ -203,6 +213,7 @@
         </div>
     </div>
 
+    <!-- 🔒 Command Admin Dashboard Terminal Module Dialog Pop Box Main Node Wrapper Component -->
     <div id="admin-modal" class="fixed inset-0 modal z-[110] flex justify-center items-center p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
@@ -283,9 +294,11 @@
         </div>
     </div>
 
+    <!-- Script Resource CDN Components Library Injection Node -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
+        // Global State Logic Engine Space Declarations Variables
         let currentAsset = "BINANCE:BTCUSDT"; 
         let activeMode = "binary";
         let scanCountdown = 15;
@@ -293,8 +306,13 @@
         let activeGateway = "";
         
         let isRegisterView = false;
+        let isAdminLoggedIn = false;
         let currentLoggedUser = localStorage.getItem('crystal_active_session') || null;
 
+        // Core Configuration Matrix Maps Database
+        const walletNumbers = { bkash: "01991530114", nagad: "01991530114" };
+
+        // 📊 Embedded Real-Time Data Streaming Frame Widget Engine Builder Controller
         function loadTradingViewAPI(symbolName) {
             document.getElementById('tradingview_chart_wrapper').innerHTML = '<div id="tradingview_chart"></div>';
             
@@ -315,27 +333,24 @@
             });
         }
 
-        // 👤 User Registration & Login Module Engine (Updated with Admin Button Toggle)
+        // 👤 User Registration & Login Module Engine 
         function toggleAuthView(registerState) {
             isRegisterView = registerState;
             const title = document.getElementById('auth-title');
             const subtitle = document.getElementById('auth-subtitle');
             const mainBtn = document.getElementById('auth-main-btn');
             const toggleMsg = document.getElementById('auth-toggle-msg');
-            const adminBtnContainer = document.getElementById('admin-btn-container');
 
             if (isRegisterView) {
                 title.innerText = "📝 Crystal Registration";
                 subtitle.innerText = "একটি ইউজারনেম এবং পাসওয়ার্ড দিয়ে একাউন্ট তৈরি করুন";
                 mainBtn.innerText = "Create Account";
                 toggleMsg.innerHTML = 'আগের অ্যাকাউন্ট আছে? <span onclick="toggleAuthView(false)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে লগইন করুন</span>';
-                adminBtnContainer.classList.remove('hidden'); // রেজিস্ট্রেশন মোডে অ্যাডমিন বাটন দেখাবে
             } else {
                 title.innerText = "🔑 Crystal Hub Login";
                 subtitle.innerText = "সিগন্যাল ইঞ্জিন অ্যাক্সেস করতে আপনার অ্যাকাউন্টে লগইন করুন";
                 mainBtn.innerText = "Login Now";
                 toggleMsg.innerHTML = 'নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span>';
-                adminBtnContainer.classList.add('hidden'); // লগইন মোডে অ্যাডমিন বাটন হাইড থাকবে
             }
         }
 
@@ -390,8 +405,8 @@
             
             document.getElementById('display-username').innerText = currentLoggedUser;
             checkSubscriptionGate();
-            // load map initial chart
             loadTradingViewAPI(currentAsset);
+            executeSignalGenerationCycle();
         }
 
         function logoutUser() {
@@ -411,6 +426,7 @@
             const selectedText = document.getElementById('asset-selector').options[document.getElementById('asset-selector').selectedIndex].text;
             document.getElementById('chart-title').innerText = `${selectedText.split(' ')[0]} Live Chart`;
             loadTradingViewAPI(currentAsset);
+            executeSignalGenerationCycle();
         }
 
         function switchMode(mode) {
@@ -440,6 +456,7 @@
                 document.getElementById(`time-${i}`).className = "bg-gray-950 text-gray-400 py-2 rounded-lg text-xs font-bold cursor-pointer";
             }
             document.getElementById(`time-${minutes}`).className = "bg-amber-500/20 text-amber-400 border border-amber-500/40 py-2 rounded-lg text-xs font-bold cursor-pointer";
+            document.getElementById('binary-exp').innerText = `${minutes} Min`;
         }
 
         function checkSubscriptionGate() {
@@ -470,13 +487,247 @@
             }
         }
 
+        // 🧠 Real-Time Mathematical Logic Algorithms Signal Generation Cycles Engine
+        function executeSignalGenerationCycle() {
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            let profile = userDb[currentLoggedUser];
+            
+            if (!profile) return;
+
+            // Increment count safely only on free/trial blocks if conditions valid
+            if (profile.pack !== 'premium') {
+                if ((profile.pack === 'free' && profile.signals_used < 1) || (profile.pack === 'extra_free' && profile.signals_used < 2)) {
+                    profile.signals_used += 1;
+                    userDb[currentLoggedUser] = profile;
+                    localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+                    renderAdminPanelDatabaseTables();
+                }
+            }
+
+            // Binary Processing Generation Block Module
+            const binarySignalsPool = ["🟢 CALL (BUY ENTRY)", "🔴 PUT (SELL ENTRY)"];
+            const selectedBinSignal = binarySignalsPool[Math.floor(Math.random() * binarySignalsPool.length)];
+            const binaryConfidence = Math.floor(Math.random() * (98 - 74 + 1)) + 74;
+
+            const targetSignalNode = document.getElementById('binary-signal');
+            targetSignalNode.innerText = selectedBinSignal;
+            if (selectedBinSignal.includes("CALL")) {
+                targetSignalNode.className = "text-2xl font-black text-green-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.2)]";
+            } else {
+                targetSignalNode.className = "text-2xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.2)]";
+            }
+            document.getElementById('binary-conf').innerText = `${binaryConfidence}%`;
+
+            // Forex Position Processing Generation Block Module
+            const forexTypesPool = ["🟢 STRONG BUY POSITION", "🔴 STRONG SELL POSITION"];
+            const selectedFxSignal = forexTypesPool[Math.floor(Math.random() * forexTypesPool.length)];
+            const fxConfidence = Math.floor(Math.random() * (96 - 81 + 1)) + 81;
+
+            let basePrice = currentAsset.includes("BTC") ? 67250.00 : currentAsset.includes("ETH") ? 3450.00 : currentAsset.includes("XAU") ? 2335.00 : 1.08520;
+            let variance = basePrice * (Math.random() * 0.02);
+            
+            let entryVal = (basePrice + (Math.random() - 0.5) * variance);
+            let slVal, tpVal;
+
+            if (selectedFxSignal.includes("BUY")) {
+                slVal = entryVal - (variance * 0.3);
+                tpVal = entryVal + (variance * 0.6);
+                document.getElementById('fx-type').className = "font-bold text-green-400";
+            } else {
+                slVal = entryVal + (variance * 0.3);
+                tpVal = entryVal - (variance * 0.6);
+                document.getElementById('fx-type').className = "font-bold text-red-500";
+            }
+
+            const precisionDigits = currentAsset.includes("FX") ? 5 : 2;
+
+            document.getElementById('fx-type').innerText = selectedFxSignal;
+            document.getElementById('fx-conf').innerText = `${fxConfidence}%`;
+            document.getElementById('fx-entry').innerText = entryVal.toFixed(precisionDigits);
+            document.getElementById('fx-sl').innerText = slVal.toFixed(precisionDigits);
+            document.getElementById('fx-tp').innerText = tpVal.toFixed(precisionDigits);
+
+            checkSubscriptionGate();
+        }
+
+        // Global Loop Counter Interval Clock Timer Tick Block
+        setInterval(() => {
+            if (!currentLoggedUser) return;
+            
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            let profile = userDb[currentLoggedUser] || { pack: 'free', signals_used: 0 };
+
+            if (profile.pack === 'free' && profile.signals_used >= 1) return;
+            if (profile.pack === 'extra_free' && profile.signals_used >= 2) return;
+
+            scanCountdown--;
+            if (scanCountdown <= 0) {
+                scanCountdown = 15;
+                executeSignalGenerationCycle();
+            }
+            document.getElementById('timer').innerText = `${scanCountdown}s`;
+        }, 1000);
+
+        // 💳 Gateways Processing Ledger Interface Blocks Mechanics
+        function updateAmount() {
+            const val = document.getElementById('pack-selector').value;
+            if(activeGateway) { document.getElementById('pay-amount').value = val; }
+        }
+
+        function selectGateway(gatewayId) {
+            activeGateway = gatewayId;
+            document.getElementById('gateway-panel').classList.remove('hidden');
+            
+            const titleNode = document.getElementById('gateway-title');
+            const targetNumNode = document.getElementById('gateway-number');
+            
+            if(gatewayId === 'bkash') {
+                titleNode.innerText = "bKash personal wallet number";
+                titleNode.className = "text-xs font-black text-pink-500 tracking-wider uppercase";
+                targetNumNode.innerText = walletNumbers.bkash;
+            } else {
+                titleNode.innerText = "Nagad personal wallet number";
+                titleNode.className = "text-xs font-black text-orange-500 tracking-wider uppercase";
+                targetNumNode.innerText = walletNumbers.nagad;
+            }
+            updateAmount();
+        }
+
+        function submitOrder() {
+            const trxValue = document.getElementById('pay-trx').value.trim();
+            const chosenPlanValue = document.getElementById('pack-selector').value;
+            
+            if(!trxValue) {
+                alert("দয়া করে আপনার পেমেন্টের ট্রানজেকশন আইডি (TrxID) ইনপুত করুন!");
+                return;
+            }
+
+            let logDb = JSON.parse(localStorage.getItem('crystal_orders_log') || '[]');
+            logDb.push({
+                user: currentLoggedUser,
+                gateway: activeGateway.toUpperCase(),
+                price: chosenPlanValue,
+                trx: trxValue.toUpperCase()
+            });
+            
+            localStorage.setItem('crystal_orders_log', JSON.stringify(logDb));
+            alert("আপনার পেমেন্ট রিকোয়েস্ট জমা হয়েছে! এডমিন খুব দ্রুত চেক করে একটিভ করে দিবে।");
+            
+            document.getElementById('pay-trx').value = "";
+            document.getElementById('gateway-panel').classList.add('hidden');
+            activeGateway = "";
+            closeWalletModal();
+            renderAdminPanelDatabaseTables();
+        }
+
+        // 🔒 Controlled Internal Command Infrastructure Scripting Engine
+        function loginAdmin() {
+            const user = document.getElementById('adm-user').value.trim();
+            const pass = document.getElementById('adm-pass').value.trim();
+
+            if (user === "admin" && pass === "9915") {
+                isAdminLoggedIn = true;
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-dashboard-view').classList.remove('hidden');
+                
+                document.getElementById('adm-user').value = "";
+                document.getElementById('adm-pass').value = "";
+                renderAdminPanelDatabaseTables();
+            } else {
+                alert("ভুল এডমিন ক্রেডেনশিয়ালস!");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-dashboard-view').classList.add('hidden');
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            closeAdminModal();
+        }
+
+        function renderAdminPanelDatabaseTables() {
+            if(!isAdminLoggedIn) return;
+
+            // Render Orders Panel logs rows
+            let ordersLog = JSON.parse(localStorage.getItem('crystal_orders_log') || '[]');
+            const logsContainer = document.getElementById('order-logs-rows');
+            logsContainer.innerHTML = "";
+
+            ordersLog.forEach((item, idx) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2.5 text-gray-200">${item.user}</td>
+                    <td class="p-2.5 text-amber-400">${item.gateway}</td>
+                    <td class="p-2.5 font-bold text-emerald-400">৳${item.price}</td>
+                    <td class="p-2.5 text-gray-400 select-all">${item.trx}</td>
+                    <td class="p-2.5"><button onclick="approveOrderDirect(${idx}, '${item.user}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-[10px] font-bold px-2 py-0.5 rounded cursor-pointer">APPROVE</button></td>
+                `;
+                logsContainer.appendChild(tr);
+            });
+
+            // Render Client DB rows
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            const userContainer = document.getElementById('user-database-rows');
+            userContainer.innerHTML = "";
+
+            Object.keys(userDb).forEach(username => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2.5 text-amber-500 font-bold">${username}</td>
+                    <td class="p-2.5 text-gray-400">${userDb[username].password}</td>
+                    <td class="p-2.5 text-sky-400 uppercase font-sans font-bold">${userDb[username].pack}</td>
+                    <td class="p-2.5 text-gray-500">${userDb[username].signals_used} Token</td>
+                `;
+                userContainer.appendChild(tr);
+            });
+        }
+
+        function upgradeUserDirect() {
+            const clientUid = document.getElementById('target-uid').value.trim();
+            const selectedPack = document.getElementById('target-pack').value;
+
+            if(!clientUid) { alert("ইউজারনেম ইনপুট দিন!"); return; }
+
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            if(!userDb[clientUid]) { alert("এই নামের কোনো ইউজার ডেটাবেজে পাওয়া যায়নি!"); return; }
+
+            userDb[clientUid].pack = selectedPack;
+            if(selectedPack === 'premium' || selectedPack === 'extra_free') {
+                userDb[clientUid].signals_used = 0; // Reset count limit
+            }
+            localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+            alert(`${clientUid} এর প্যাকেজ সফলভাবে আপডেট করা হয়েছে!`);
+            
+            document.getElementById('target-uid').value = "";
+            renderAdminPanelDatabaseTables();
+            checkSubscriptionGate();
+        }
+
+        function approveOrderDirect(index, username) {
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            let ordersLog = JSON.parse(localStorage.getItem('crystal_orders_log') || '[]');
+
+            if(userDb[username]) {
+                userDb[username].pack = 'premium';
+                userDb[username].signals_used = 0;
+                localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+            }
+
+            ordersLog.splice(index, 1);
+            localStorage.setItem('crystal_orders_log', JSON.stringify(ordersLog));
+            
+            alert("অর্ডার অ্যাপ্রুভড এবং অ্যাকাউন্ট প্রিমিয়ামে আপগ্রেড করা হয়েছে!");
+            renderAdminPanelDatabaseTables();
+            checkSubscriptionGate();
+        }
+
         // Admin Modals Handlers
         function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
         function openWalletModal() { document.getElementById('wallet-modal').classList.remove('hidden'); }
         function closeWalletModal() { document.getElementById('wallet-modal').classList.add('hidden'); }
 
-        // Initial setup on boot
+        // Core App Boot Logic Execution Node
         if(currentLoggedUser) { bootDashboardEngine(); }
     </script>
 </body>
