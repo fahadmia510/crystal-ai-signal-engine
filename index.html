@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crystal AI Multi-Asset Signal Hub</title>
+    <!-- Tailwind CSS for Dark Premium UI -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         body { background-color: #0c1017; color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; }
     </style>
@@ -13,233 +13,108 @@
 <body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
         
+        <!-- Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-5 mb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-amber-500 tracking-wide">CRYSTAL AI SIGNAL ENGINE</h1>
-                <p class="text-xs text-gray-400 mt-1">Institutional Multi-Asset Binary & Forex Advanced Dashboard</p>
+                <p class="text-xs text-gray-400 mt-1">Multi-Asset TradingView API Integration Dashboard</p>
             </div>
+            
+            <!-- 🛠️ এই ড্রপডাউন মেনু দিয়ে আপনি চার্ট API ম্যানেজ করবেন -->
             <div class="flex items-center gap-3">
+                <label class="text-xs font-bold text-gray-400 uppercase">Select Market:</label>
                 <select id="asset-selector" onchange="changeAsset()" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-500 cursor-pointer">
-                    <option value="BTCUSDT">BTC/USD (Bitcoin)</option>
-                    <option value="ETHUSDT">ETH/USD (Ethereum)</option>
-                    <option value="EURUSDT">EUR/USD (Forex)</option>
-                    <option value="GBPUSDT">GBP/USD (Forex)</option>
-                    <option value="XAUUSDT">XAU/USD (Gold)</option>
+                    <option value="BINANCE:BTCUSDT">BTC/USD (Bitcoin)</option>
+                    <option value="BINANCE:ETHUSDT">ETH/USD (Ethereum)</option>
+                    <option value="FX:EURUSD">EUR/USD (Forex)</option>
+                    <option value="FX:GBPUSD">GBP/USD (Forex)</option>
+                    <option value="OANDA:XAUUSD">XAU/USD (Gold)</option>
                 </select>
                 <div class="bg-gray-900 px-4 py-2 rounded-lg border border-gray-800 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-xs font-semibold text-green-400">LIVE FEED</span>
+                    <span class="text-xs font-semibold text-green-400">API ACTIVE</span>
                 </div>
             </div>
         </header>
 
-        <div class="flex gap-4 mb-6">
-            <button id="btn-binary" onclick="switchMode('binary')" class="flex-1 bg-amber-500 text-gray-950 font-bold py-3 px-4 rounded-xl shadow-lg transition duration-200 cursor-pointer">
-                📊 BINARY OPTIONS (Next Candle Mode)
-            </button>
-            <button id="btn-forex" onclick="switchMode('forex')" class="flex-1 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold py-3 px-4 rounded-xl border border-gray-800 transition duration-200 cursor-pointer">
-                💼 FOREX & CRYPTO TRADING (SL/TP Mode)
-            </button>
-        </div>
-
+        <!-- Dynamic Content Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
+            <!-- TradingView API Widget Panel -->
             <div class="lg:col-span-2 bg-gray-900 p-4 rounded-2xl border border-gray-800 shadow-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <span id="chart-title" class="font-bold text-lg text-gray-200">BTCUSDT Real-Time Chart</span>
-                    <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-medium">Next Candle Engine v2.0</span>
+                    <span id="chart-title" class="font-bold text-lg text-gray-200">BTC/USD Real-Time Chart</span>
+                    <span class="text-xs bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-medium">TradingView CDN Feed</span>
                 </div>
-                <div id="chart" class="w-full h-[450px] rounded-lg bg-[#090d14]"></div>
+                
+                <!-- 📦 এই কন্টেইনারের ভেতরে API চার্ট লোড করবে -->
+                <div class="w-full h-[460px] rounded-lg overflow-hidden bg-[#090d14]" id="tradingview_chart_wrapper">
+                    <div id="tradingview_chart"></div>
+                </div>
             </div>
 
+            <!-- Signal Preview Info (Static UI Elements) -->
             <div class="space-y-6">
-                
-                <div id="panel-binary" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4">
-                    <h2 class="font-bold text-sm text-gray-400 uppercase tracking-widest">Binary Expiry Time</h2>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setBinaryTime(1)" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 py-2 rounded-lg text-xs font-bold cursor-pointer">1 MIN</button>
-                        <button onclick="setBinaryTime(2)" class="bg-gray-950 hover:bg-gray-800 text-gray-400 py-2 rounded-lg text-xs font-bold cursor-pointer">2 MIN</button>
-                        <button onclick="setBinaryTime(3)" class="bg-gray-950 hover:bg-gray-800 text-gray-400 py-2 rounded-lg text-xs font-bold cursor-pointer">3 MIN</button>
-                    </div>
-
-                    <div class="p-5 bg-gray-950 rounded-xl border border-gray-800 text-center space-y-2">
-                        <span class="text-xs text-gray-400 block font-medium">AI NEXT CANDLE PREDICTION</span>
-                        <div id="binary-signal" class="text-3xl font-black text-green-400">CALL (UP)</div>
-                        <div class="text-xs text-gray-500 font-mono">Confidence: 84% | Reset in: <span id="timer" class="text-amber-400 font-bold">60s</span></div>
+                <div class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4">
+                    <h2 class="font-bold text-sm text-gray-400 uppercase tracking-widest">Dashboard Info</h2>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        ড্রপডাউন থেকে যেকোনো মার্কেট পরিবর্তন করলে নিচের জাভাস্ক্রিপ্ট ইঞ্জিনটি সরাসরি TradingView-এর সার্ভারে নতুন API রিকোয়েস্ট পাঠাবে এবং সাথে সাথে চার্ট আপডেট হবে।
+                    </p>
+                    <div class="p-4 bg-gray-950 rounded-xl border border-gray-800 text-xs text-amber-400 font-mono">
+                        Status: API Fully Operational
                     </div>
                 </div>
-
-                <div id="panel-forex" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 hidden">
-                    <h2 class="font-bold text-sm text-gray-400 uppercase tracking-widest">Forex Signals & Risk Manager</h2>
-                    <div class="p-4 bg-gray-950 rounded-xl border border-gray-800 space-y-2">
-                        <div class="flex justify-between text-xs text-gray-400"><span>SIGNAL TYPE:</span> <span id="fx-type" class="text-green-400 font-bold">BUY (LONG)</span></div>
-                        <div class="flex justify-between text-xs text-gray-400"><span>ENTRY PRICE:</span> <span id="fx-entry" class="text-gray-200 font-mono">0.00</span></div>
-                        <div class="flex justify-between text-xs text-gray-400"><span>STOP LOSS (SL):</span> <span id="fx-sl" class="text-red-400 font-mono">0.00</span></div>
-                        <div class="flex justify-between text-xs text-gray-400"><span>TAKE PROFIT (TP):</span> <span id="fx-tp" class="text-green-400 font-mono">0.00</span></div>
-                    </div>
-
-                    <div class="space-y-3 pt-2">
-                        <div>
-                            <label class="text-xs text-gray-400 block mb-1">Balance ($)</label>
-                            <input type="number" id="balance" value="1000" class="w-full bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-amber-500">
-                        </div>
-                        <button onclick="calculateForexRisk()" class="w-full bg-amber-500 text-gray-950 font-bold py-2 rounded-lg text-xs hover:bg-amber-600 transition cursor-pointer">Calculate Position Size</button>
-                        <div id="fx-risk-result" class="text-xs text-center text-amber-400 font-medium mt-1"></div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <footer class="mt-8 border-t border-gray-800 pt-4 text-center text-xs text-gray-500">
-            ঝুঁকি সতর্কতা: ফিনান্সিয়াল মার্কেটে ট্রেড করা অত্যন্ত ঝুঁকিপূর্ণ। সিগন্যাল ইঞ্জিনটি শুধুমাত্র ডাটা বিশ্লেষণের জন্য তৈরি।
-        </footer>
     </div>
 
+    <!-- 🌐 TradingView-এর মেইন অফিশিয়াল কোর API স্ক্রিপ্ট -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    
     <script>
-        let chart, candlestickSeries, webSocket;
-        let currentAsset = "BTCUSDT";
-        let activeMode = "binary";
-        let countdownTime = 60;
+        // ডিফল্ট অ্যাসেট হিসেবে বিটকয়েন সেট করা আছে
+        let currentAsset = "BINANCE:BTCUSDT"; 
 
-        function initChart() {
-            const container = document.getElementById('chart');
-            container.innerHTML = ""; 
+        // 🧠 TradingView Widget API লোড করার মেইন ফাংশন
+        function loadTradingViewAPI(symbolName) {
+            // প্রতিবার পরিবর্তনের সময় পুরনো মেমোরি ক্লিয়ার করার জন্য কন্টেইনার রিসেট
+            document.getElementById('tradingview_chart_wrapper').innerHTML = '<div id="tradingview_chart"></div>';
             
-            chart = LightweightCharts.createChart(container, {
-                layout: { background: { type: 'solid', color: '#090d14' }, textColor: '#d1d4dc' },
-                grid: { vertLines: { color: '#161b22' }, horzLines: { color: '#161b22' } },
-                rightPriceScale: { borderColor: '#30363d' },
-                timeScale: { borderColor: '#30363d', timeVisible: true }
+            new TradingView.widget({
+                "width": "100%",
+                "height": 460,
+                "symbol": symbolName,
+                "interval": "1", // ক্যান্ডেলের টাইমফ্রেম (১ মিনিট)
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1", // জাপানিজ ক্যান্ডেলস্টিক স্টাইল
+                "locale": "en",
+                "toolbar_bg": "#090d14",
+                "enable_publishing": false,
+                "hide_side_toolbar": true, // সাইড টুলবার হাইড রাখা হয়েছে যাতে প্রিমিয়াম দেখায়
+                "allow_symbol_change": false,
+                "container_id": "tradingview_chart"
             });
-
-            candlestickSeries = chart.addCandlestickSeries({
-                upColor: '#26a69a', downColor: '#ef5350', borderVisible: false,
-                wickUpColor: '#26a69a', wickDownColor: '#ef5350'
-            });
-
-            loadHistoricalData();
         }
 
-        function loadHistoricalData() {
-            fetch(`https://api.binance.com/api/v3/klines?symbol=${currentAsset}&interval=1m&limit=100`)
-                .then(res => res.json())
-                .then(data => {
-                    const parsedData = data.map(d => ({
-                        time: d[0] / 1000, 
-                        open: parseFloat(d[1]), 
-                        high: parseFloat(d[2]), 
-                        low: parseFloat(d[3]), 
-                        close: parseFloat(d[4])
-                    }));
-                    candlestickSeries.setData(parsedData);
-                    connectWebSocket();
-                }).catch(err => console.error("Error fetching historical data: ", err));
-        }
-
-        function connectWebSocket() {
-            if (webSocket) {
-                webSocket.close();
-            }
-            
-            webSocket = new WebSocket(`wss://stream.binance.com:9443/ws/${currentAsset.toLowerCase()}@kline_1m`);
-            
-            webSocket.onmessage = function (event) {
-                const data = JSON.parse(event.data);
-                const kline = data.k;
-                const price = parseFloat(kline.c);
-
-                candlestickSeries.update({
-                    time: kline.t / 1000,
-                    open: parseFloat(kline.o),
-                    high: parseFloat(kline.h),
-                    low: parseFloat(kline.l),
-                    close: price
-                });
-
-                document.getElementById('fx-entry').innerText = price;
-                
-                // ডাইনামিক ফরেক্স SL/TP সেটআপ
-                const isBuy = document.getElementById('fx-type').innerText.includes("BUY");
-                const decimalPlaces = (currentAsset.includes("USD") && !currentAsset.includes("BTC") && !currentAsset.includes("ETH")) ? 4 : 2;
-                
-                if (isBuy) {
-                    document.getElementById('fx-sl').innerText = (price * 0.997).toFixed(decimalPlaces);
-                    document.getElementById('fx-tp').innerText = (price * 1.006).toFixed(decimalPlaces);
-                } else {
-                    document.getElementById('fx-sl').innerText = (price * 1.003).toFixed(decimalPlaces);
-                    document.getElementById('fx-tp').innerText = (price * 0.994).toFixed(decimalPlaces);
-                }
-            };
-        }
-
+        // 🔄 ড্রপডাউন মেনু চেঞ্জ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
         function changeAsset() {
+            // ড্রপডাউন থেকে সিলেক্ট করা ভ্যালু (যেমন: FX:EURUSD) রিড করা হচ্ছে
             currentAsset = document.getElementById('asset-selector').value;
-            document.getElementById('chart-title').innerText = `${currentAsset} Real-Time Chart`;
-            initChart();
-        }
-
-        function switchMode(mode) {
-            activeMode = mode;
-            const btnBinary = document.getElementById('btn-binary');
-            const btnForex = document.getElementById('btn-forex');
-            const panelBinary = document.getElementById('panel-binary');
-            const panelForex = document.getElementById('panel-forex');
-
-            if (mode === 'binary') {
-                btnBinary.className = "flex-1 bg-amber-500 text-gray-950 font-bold py-3 px-4 rounded-xl shadow-lg transition cursor-pointer";
-                btnForex.className = "flex-1 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold py-3 px-4 rounded-xl border border-gray-800 transition cursor-pointer";
-                panelBinary.classList.remove('hidden');
-                panelForex.classList.add('hidden');
-            } else {
-                btnForex.className = "flex-1 bg-amber-500 text-gray-950 font-bold py-3 px-4 rounded-xl shadow-lg transition cursor-pointer";
-                btnBinary.className = "flex-1 bg-gray-900 hover:bg-gray-800 text-gray-300 font-bold py-3 px-4 rounded-xl border border-gray-800 transition cursor-pointer";
-                panelForex.classList.remove('hidden');
-                panelBinary.classList.add('hidden');
-            }
-        }
-
-        function setBinaryTime(minutes) {
-            countdownTime = minutes * 60;
-            const signals = ["CALL (UP)", "PUT (DOWN)", "NO TRADE SETUP"];
-            const colors = ["text-green-400", "text-red-400", "text-gray-500"];
-            const randomIndex = Math.floor(Math.random() * signals.length);
             
-            const signalText = document.getElementById('binary-signal');
-            signalText.innerText = signals[randomIndex];
-            signalText.className = `text-3xl font-black ${colors[randomIndex]}`;
-
-            // ফরেক্স প্যানেলের টাইপও অটো সিঙ্ক হবে
-            const fxType = document.getElementById('fx-type');
-            if(signals[randomIndex] === "CALL (UP)") {
-                fxType.innerText = "BUY (LONG)";
-                fxType.className = "text-green-400 font-bold";
-            } else if(signals[randomIndex] === "PUT (DOWN)") {
-                fxType.innerText = "SELL (SHORT)";
-                fxType.className = "text-red-400 font-bold";
-            } else {
-                fxType.innerText = "NEUTRAL";
-                fxType.className = "text-gray-500 font-bold";
-            }
+            // ওপরের হেডিং টেক্সট পরিবর্তন করার লজিক
+            const selectedText = document.getElementById('asset-selector').options[document.getElementById('asset-selector').selectedIndex].text;
+            document.getElementById('chart-title').innerText = `${selectedText.split(' ')[0]} Live Chart`;
+            
+            // 🚀 নতুন সিলেক্ট করা মার্কেটের নাম দিয়ে API-কে পুনরায় রান করানো হচ্ছে
+            loadTradingViewAPI(currentAsset);
         }
 
-        setInterval(() => {
-            if (countdownTime > 0) {
-                countdownTime--;
-                document.getElementById('timer').innerText = `${countdownTime}s`;
-            } else {
-                countdownTime = 60;
-                setBinaryTime(1);
-            }
-        }, 1000);
-
-        function calculateForexRisk() {
-            const balance = document.getElementById('balance').value;
-            const maxLossBudget = balance * 0.02; 
-            document.getElementById('fx-risk-result').innerText = `Max Risk Budget (2%): $${maxLossBudget.toFixed(2)} | Rec. Lot: 0.01 - 0.03`;
-        }
-
-        window.onload = initChart;
+        // ব্রাউজারে পেজটি প্রথমবার লোড হওয়ার সাথে সাথে ডিফল্ট চার্টটি রান হবে
+        window.onload = function() {
+            loadTradingViewAPI(currentAsset);
+        };
     </script>
 </body>
 </html>
