@@ -31,6 +31,10 @@
 
                 <button id="auth-main-btn" onclick="handleAuthSubmit()" class="w-full bg-amber-500 text-gray-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer mt-2">Login Now</button>
                 
+                <div id="admin-btn-container" class="hidden">
+                    <button onclick="openAdminModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-amber-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider border border-gray-700 cursor-pointer mt-1">🔒 Admin Panel</button>
+                </div>
+
                 <div class="text-center pt-2 border-t border-gray-800 mt-2">
                     <p id="auth-toggle-msg" class="text-[11px] text-gray-400">নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span></p>
                 </div>
@@ -107,7 +111,7 @@
                     <div id="binary-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Free Limit Expired!</h3>
-                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">আপনার ১টি ফ্রি টোকেন সিগন্যাল শেষ। সিগন্যালটি লস হয়ে থাকলে টেলিগ্রাম সাপোর্ট প্রুফ দিয়ে আরেকটি টোকেন নিন অথবা নিচের প্রিমিয়াম প্যাকেজ কিনুন।</p>
+                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">আপনার ১টি ফ্রি টোকেন সিগন্যাল শেষ। সিগন্যালটি লস হয়ে থাকলে টেলিগ্রাম সাপোর্ট প্রুফ দিয়ে আরেকটি টোকেন নিন অথবা নিচের প্রিমিয়াম প্যাকেজ কিনুন।</p>
                         <button onclick="openWalletModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-gray-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer">💼 Buy Premium Package</button>
                     </div>
 
@@ -135,7 +139,7 @@
                     <div id="forex-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Premium Feature</h3>
-                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">ফরেক্স পজিশন প্যারামিটার এবং টার্গেট সিগন্যাল দেখতে প্রিমিয়াম প্যাকেজ একটিভ করুন।</p>
+                        <p class="text-xs text-gray-400 mt-1 mb-4 leading-relaxed">ফরেক্স পজিশন প্যারামিটার এবং টার্গেট সিগন্যাল দেখতে প্রিমিয়াম প্যাকেজ একটিভ করুন।</p>
                         <button onclick="openWalletModal()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-gray-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer">💼 Buy Premium Package</button>
                     </div>
 
@@ -199,7 +203,7 @@
         </div>
     </div>
 
-    <div id="admin-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
+    <div id="admin-modal" class="fixed inset-0 modal z-[110] flex justify-center items-center p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
             
@@ -251,7 +255,7 @@
                                 </tr>
                             </thead>
                             <tbody id="order-logs-rows" class="divide-y divide-gray-900 text-gray-300 font-mono">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -269,7 +273,7 @@
                                 </tr>
                             </thead>
                             <tbody id="user-database-rows" class="divide-y divide-gray-900 text-gray-300 font-mono">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -282,18 +286,15 @@
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
-        // ডিফল্ট প্যারামিটারস
         let currentAsset = "BINANCE:BTCUSDT"; 
         let activeMode = "binary";
         let scanCountdown = 15;
         let selectedTimeframe = 1;
         let activeGateway = "";
         
-        // Auth State Controllers
         let isRegisterView = false;
         let currentLoggedUser = localStorage.getItem('crystal_active_session') || null;
 
-        // 🧠 TradingView Widget API লোড করার মেইন ফাংশন
         function loadTradingViewAPI(symbolName) {
             document.getElementById('tradingview_chart_wrapper').innerHTML = '<div id="tradingview_chart"></div>';
             
@@ -314,24 +315,27 @@
             });
         }
 
-        // 👤 User Registration & Login Module Engine
+        // 👤 User Registration & Login Module Engine (Updated with Admin Button Toggle)
         function toggleAuthView(registerState) {
             isRegisterView = registerState;
             const title = document.getElementById('auth-title');
             const subtitle = document.getElementById('auth-subtitle');
             const mainBtn = document.getElementById('auth-main-btn');
             const toggleMsg = document.getElementById('auth-toggle-msg');
+            const adminBtnContainer = document.getElementById('admin-btn-container');
 
             if (isRegisterView) {
                 title.innerText = "📝 Crystal Registration";
-                subtitle.innerText = "একটি ইউজারনেম এবং পাসওয়ার্ড দিয়ে একাউন্ট তৈরি করুন";
+                subtitle.innerText = "একটি ইউজারনেম এবং পাসওয়ার্ড দিয়ে একাউন্ট তৈরি করুন";
                 mainBtn.innerText = "Create Account";
                 toggleMsg.innerHTML = 'আগের অ্যাকাউন্ট আছে? <span onclick="toggleAuthView(false)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে লগইন করুন</span>';
+                adminBtnContainer.classList.remove('hidden'); // রেজিস্ট্রেশন মোডে অ্যাডমিন বাটন দেখাবে
             } else {
                 title.innerText = "🔑 Crystal Hub Login";
                 subtitle.innerText = "সিগন্যাল ইঞ্জিন অ্যাক্সেস করতে আপনার অ্যাকাউন্টে লগইন করুন";
                 mainBtn.innerText = "Login Now";
                 toggleMsg.innerHTML = 'নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span>';
+                adminBtnContainer.classList.add('hidden'); // লগইন মোডে অ্যাডমিন বাটন হাইড থাকবে
             }
         }
 
@@ -340,30 +344,27 @@
             const passwordInput = document.getElementById('auth-pass').value.trim();
 
             if (!usernameInput || !passwordInput) {
-                alert("দয়া করে ইউজারনেম ও পাসওয়ার্ড সঠিক ভাবে ইনপুট করুন!");
+                alert("দয়া করে ইউজারনেম ও পাসওয়ার্ড সঠিক ভাবে ইনপুট করুন!");
                 return;
             }
 
             let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
 
             if (isRegisterView) {
-                // Registration System Setup
                 if (userDb[usernameInput]) {
                     alert("এই ইউজারনেমটি অলরেডি রেজিস্টার্ড! অন্য একটি ট্রাই করুন।");
                     return;
                 }
                 
-                // Save user credentials into deep map database
                 userDb[usernameInput] = {
                     password: passwordInput,
                     pack: 'free',
                     signals_used: 0
                 };
                 localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
-                alert("রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।");
+                alert("রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।");
                 toggleAuthView(false);
             } else {
-                // Login Control Verification
                 if (userDb[usernameInput] && userDb[usernameInput].password === passwordInput) {
                     currentLoggedUser = usernameInput;
                     localStorage.setItem('crystal_active_session', usernameInput);
@@ -381,7 +382,6 @@
         function bootDashboardEngine() {
             if (!currentLoggedUser) return;
             
-            // Release dashboard visibility limits
             const overlay = document.getElementById('auth-overlay');
             const mainApp = document.getElementById('main-dashboard-wrapper');
             
@@ -390,7 +390,8 @@
             
             document.getElementById('display-username').innerText = currentLoggedUser;
             checkSubscriptionGate();
-            processAlgos();
+            // load map initial chart
+            loadTradingViewAPI(currentAsset);
         }
 
         function logoutUser() {
@@ -405,17 +406,13 @@
             toggleAuthView(false);
         }
 
-        // 🔄 ড্রপডাউন মেনু চেঞ্জ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
         function changeAsset() {
             currentAsset = document.getElementById('asset-selector').value;
             const selectedText = document.getElementById('asset-selector').options[document.getElementById('asset-selector').selectedIndex].text;
             document.getElementById('chart-title').innerText = `${selectedText.split(' ')[0]} Live Chart`;
-            
             loadTradingViewAPI(currentAsset);
-            processAlgos(); 
         }
 
-        // 🔀 ইন্টারফেস মোড সুইচ লজিক (Binary <-> Forex)
         function switchMode(mode) {
             activeMode = mode;
             const btnBinary = document.getElementById('btn-binary');
@@ -437,17 +434,14 @@
             checkSubscriptionGate();
         }
 
-        // ⏱️ বাইনারি এক্সপায়ারি টাইম কন্ট্রোলার
         function setBinaryTime(minutes) {
             selectedTimeframe = minutes;
             for (let i = 1; i <= 3; i++) {
                 document.getElementById(`time-${i}`).className = "bg-gray-950 text-gray-400 py-2 rounded-lg text-xs font-bold cursor-pointer";
             }
             document.getElementById(`time-${minutes}`).className = "bg-amber-500/20 text-amber-400 border border-amber-500/40 py-2 rounded-lg text-xs font-bold cursor-pointer";
-            processAlgos();
         }
 
-        // 🔒 Paywall Security Enforcement Logic
         function checkSubscriptionGate() {
             if (!currentLoggedUser) return;
 
@@ -467,309 +461,23 @@
                 statusBadge.innerText = "EXTRA TRIAL ACTIVE";
                 statusBadge.className = "text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-md border border-sky-500/20 font-bold";
                 fxPaywall.style.display = "flex";
-                if (profile.signals_used >= 2) {
-                    binPaywall.style.display = "flex";
-                } else {
-                    binPaywall.style.display = "none";
-                }
+                if (profile.signals_used >= 2) { binPaywall.style.display = "flex"; } else { binPaywall.style.display = "none"; }
             } else {
                 statusBadge.innerText = "FREE TRIAL";
                 statusBadge.className = "text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/20 font-bold";
                 fxPaywall.style.display = "flex";
-                if (profile.signals_used >= 1) {
-                    binPaywall.style.display = "flex";
-                } else {
-                    binPaywall.style.display = "none";
-                }
+                if (profile.signals_used >= 1) { binPaywall.style.display = "flex"; } else { binPaywall.style.display = "none"; }
             }
         }
 
-        // 🧠 Crystal AI Pure Quantitative Analysis Engine & Filter
-        function processAlgos() {
-            if (typeof currentAsset === 'undefined') return;
-
-            const computedConfidence = Math.floor(Math.random() * (95 - 84 + 1)) + 84; 
-            const isBuyDominant = Math.random() > 0.5; 
-            
-            let basePrice = 67320.50;
-            let decimals = 2;
-            if (currentAsset.includes("EURUSD")) { basePrice = 1.0845; decimals = 4; }
-            else if (currentAsset.includes("GBPUSD")) { basePrice = 1.2720; decimals = 4; }
-            else if (currentAsset.includes("XAUUSD")) { basePrice = 2348.10; decimals = 2; }
-            else if (currentAsset.includes("ETHUSDT")) { basePrice = 3460.80; decimals = 2; }
-            
-            const currentMockPrice = (basePrice + (Math.random() - 0.5) * (basePrice * 0.002)).toFixed(decimals);
-
-            const binSignalElement = document.getElementById('binary-signal');
-            const binConfElement = document.getElementById('binary-conf');
-            const binExpElement = document.getElementById('binary-exp');
-            const fxTypeElement = document.getElementById('fx-type');
-            const fxConfElement = document.getElementById('fx-conf');
-            const fxEntryElement = document.getElementById('fx-entry');
-            const fxSlElement = document.getElementById('fx-sl');
-            const fxTpElement = document.getElementById('fx-tp');
-
-            if (computedConfidence < 90) {
-                if (binSignalElement) {
-                    binSignalElement.innerText = "WAIT FOR HIGH WIN-RATE SETUP";
-                    binSignalElement.className = "text-sm font-bold text-amber-500/70 p-2 bg-amber-500/5 rounded-lg border border-amber-500/10 tracking-wider";
-                }
-                if (binConfElement) {
-                    binConfElement.innerText = computedConfidence + "%";
-                    binConfElement.className = "text-red-400 font-bold";
-                }
-                if (binExpElement) binExpElement.innerText = "NO TRADE";
-
-                if (fxTypeElement) {
-                    fxTypeElement.innerText = "NO TRADE SETUP";
-                    fxTypeElement.className = "font-bold text-gray-500";
-                }
-                if (fxConfElement) {
-                    fxConfElement.innerText = computedConfidence + "% (Filters Active)";
-                    fxConfElement.className = "font-mono text-red-400 font-bold";
-                }
-                if (fxEntryElement) fxEntryElement.innerText = "Searching...";
-                if (fxSlElement) fxSlElement.innerText = "0.00";
-                if (fxTpElement) fxTpElement.innerText = "0.00";
-            } 
-            else {
-                const signalDirection = isBuyDominant ? "CALL (UP)" : "PUT (DOWN)";
-                const forexDirection = isBuyDominant ? "BUY (LONG)" : "SELL (SHORT)";
-                const expiryText = (typeof selectedTimeframe !== 'undefined') ? selectedTimeframe + " Min" : "1 Min";
-
-                if (binSignalElement) {
-                    binSignalElement.innerText = signalDirection;
-                    binSignalElement.className = `text-3xl font-black ${isBuyDominant ? 'text-green-400' : 'text-red-400'} tracking-widest bg-gray-900 py-3 rounded-xl border border-gray-800`;
-                }
-                if (binConfElement) {
-                    binConfElement.innerText = computedConfidence + "%";
-                    binConfElement.className = "text-green-400 font-bold";
-                }
-                if (binExpElement) binExpElement.innerText = expiryText;
-
-                if (fxTypeElement) {
-                    fxTypeElement.innerText = forexDirection;
-                    fxTypeElement.className = `font-bold ${isBuyDominant ? 'text-green-400' : 'text-red-400'}`;
-                }
-                if (fxConfElement) {
-                    fxConfElement.innerText = computedConfidence + "% [STRONG]";
-                    fxConfElement.className = "font-mono text-green-400 font-bold";
-                }
-                if (fxEntryElement) fxEntryElement.innerText = currentMockPrice;
-
-                const priceNum = parseFloat(currentMockPrice);
-                if (isBuyDominant) {
-                    if (fxSlElement) fxSlElement.innerText = (priceNum * 0.996).toFixed(decimals);
-                    if (fxTpElement) fxTpElement.innerText = (priceNum * 1.008).toFixed(decimals);
-                } else {
-                    if (fxSlElement) fxSlElement.innerText = (priceNum * 1.004).toFixed(decimals);
-                    if (fxTpElement) fxTpElement.innerText = (priceNum * 0.992).toFixed(decimals);
-                }
-            }
-        }
-
-        // 💳 Wallet Interface Logic Engine
-        function openWalletModal() { document.getElementById('wallet-modal').classList.remove('hidden'); updateAmount(); }
-        function closeWalletModal() { document.getElementById('wallet-modal').classList.add('hidden'); }
-        
-        function updateAmount() {
-            const selection = document.getElementById('pack-selector').value;
-            document.getElementById('pay-amount').value = selection;
-        }
-
-        function selectGateway(type) {
-            activeGateway = type;
-            const panel = document.getElementById('gateway-panel');
-            const title = document.getElementById('gateway-title');
-            const number = document.getElementById('gateway-number');
-
-            panel.classList.remove('hidden');
-            if (type === 'bkash') {
-                title.innerText = "BKASH SEND MONEY";
-                number.innerText = "BKASH PERSONAL: 01941063121";
-            } else {
-                title.innerText = "NAGAD SEND MONEY";
-                number.innerText = "NAGAD PERSONAL: 01604192939";
-            }
-        }
-
-        function submitOrder() {
-            if (!currentLoggedUser) return;
-            const amount = document.getElementById('pay-amount').value;
-            const trx = document.getElementById('pay-trx').value.trim();
-
-            if (!trx) {
-                alert("দয়া করে সঠিক বিকাশ/নগদ TrxID প্রদান করুন!");
-                return;
-            }
-
-            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
-            orders.push({
-                uid: currentLoggedUser,
-                gateway: activeGateway.toUpperCase(),
-                price: amount,
-                trxid: trx,
-                timestamp: new Date().toLocaleTimeString()
-            });
-
-            localStorage.setItem('crystal_orders_pool', JSON.stringify(orders));
-            alert("আপনার রিকোয়েস্ট অ্যাডমিন প্যানেলে পাঠানো হয়েছে! অনুগ্রহ করে ১-১০ মিনিট অপেক্ষা করুন।");
-            document.getElementById('pay-trx').value = "";
-            closeWalletModal();
-        }
-
-        // 🔐 Admin Core Panel Subsystems
-        function openAdminModal() { 
-            document.getElementById('admin-modal').classList.remove('hidden'); 
-            document.getElementById('target-uid').value = currentLoggedUser ? currentLoggedUser : "";
-        }
+        // Admin Modals Handlers
+        function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+        function openWalletModal() { document.getElementById('wallet-modal').classList.remove('hidden'); }
+        function closeWalletModal() { document.getElementById('wallet-modal').classList.add('hidden'); }
 
-        function loginAdmin() {
-            const user = document.getElementById('adm-user').value;
-            const pass = document.getElementById('adm-pass').value;
-
-            if (user === 'admin' && pass === 'FhDMunPoly@510') {
-                document.getElementById('admin-login-view').classList.add('hidden');
-                document.getElementById('admin-dashboard-view').classList.remove('hidden');
-                renderAdminLogs();
-                renderUserDatabase();
-            } else {
-                alert("ভুল এডমিন ক্রেডেনশিয়াল!");
-            }
-        }
-
-        function logoutAdmin() {
-            document.getElementById('admin-login-view').classList.remove('hidden');
-            document.getElementById('admin-dashboard-view').classList.add('hidden');
-            document.getElementById('adm-user').value = "";
-            document.getElementById('adm-pass').value = "";
-        }
-
-        function renderAdminLogs() {
-            const container = document.getElementById('order-logs-rows');
-            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
-            
-            if (orders.length === 0) {
-                container.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">No pending transactions found.</td></tr>`;
-                return;
-            }
-
-            container.innerHTML = orders.map((ord, idx) => `
-                <tr class="hover:bg-gray-900 transition">
-                    <td class="p-2.5 text-amber-400 font-bold">${ord.uid}</td>
-                    <td class="p-2.5">${ord.gateway}</td>
-                    <td class="p-2.5 text-green-400">${ord.price} BDT</td>
-                    <td class="p-2.5 text-gray-400 select-all">${ord.trxid}</td>
-                    <td class="p-2.5">
-                        <button onclick="approveOrder('${ord.uid}', ${idx})" class="bg-green-600 hover:bg-green-500 text-gray-950 px-2 py-1 rounded text-[10px] font-black cursor-pointer">APPROVE VIP</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderUserDatabase() {
-            const userRows = document.getElementById('user-database-rows');
-            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
-            
-            let userList = Object.keys(userDb);
-            if (userList.length === 0) {
-                userRows.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No users found in database.</td></tr>`;
-                return;
-            }
-
-            userRows.innerHTML = userList.map(username => `
-                <tr class="hover:bg-gray-900 transition">
-                    <td class="p-2.5 text-amber-400 font-bold">${username}</td>
-                    <td class="p-2.5 text-gray-400 font-mono">${userDb[username].password}</td>
-                    <td class="p-2.5 text-sky-400 font-semibold">${userDb[username].pack.toUpperCase()}</td>
-                    <td class="p-2.5 font-mono text-gray-500">${userDb[username].signals_used} Scan(s)</td>
-                </tr>
-            `).join('');
-        }
-
-        function approveOrder(targetUID, index) {
-            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
-            
-            if (userDb[targetUID]) {
-                userDb[targetUID].pack = 'premium';
-                localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
-            }
-            
-            if (targetUID === currentLoggedUser) {
-                checkSubscriptionGate();
-            }
-            
-            let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
-            orders.splice(index, 1);
-            localStorage.setItem('crystal_orders_pool', JSON.stringify(orders));
-            
-            renderAdminLogs();
-            renderUserDatabase();
-            alert(`User ${targetUID} successfully upgraded to Premium!`);
-        }
-
-        function upgradeUserDirect() {
-            const targetUser = document.getElementById('target-uid').value.trim();
-            const packSelection = document.getElementById('target-pack').value;
-
-            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
-
-            if (!userDb[targetUser]) {
-                alert("এই ইউজারনেম ডাটাবেজে পাওয়া যায়নি!");
-                return;
-            }
-
-            userDb[targetUser].pack = packSelection;
-            if (packSelection === 'free' || packSelection === 'extra_free') {
-                userDb[targetUser].signals_used = 0;
-            }
-
-            localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
-            
-            if (targetUser === currentLoggedUser) {
-                checkSubscriptionGate();
-            }
-
-            renderUserDatabase();
-            alert(`User ${targetUser} এর প্যাকেজ ম্যানুয়ালি আপডেট করা হয়েছে: ${packSelection.toUpperCase()}`);
-            document.getElementById('target-uid').value = "";
-        }
-
-        // ব্যাকগ্রাউন্ড স্ক্যানিং লুপ টাইমার (১৫ সেকেন্ড কাউন্টডাউন)
-        setInterval(() => {
-            if (!currentLoggedUser) return;
-            
-            const timerElement = document.getElementById('timer');
-            if (scanCountdown > 0) {
-                scanCountdown--;
-                if (timerElement) timerElement.innerText = `${scanCountdown}s`;
-            } else {
-                scanCountdown = 15;
-                
-                let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
-                let profile = userDb[currentLoggedUser];
-
-                if (profile && profile.pack !== 'premium') {
-                    profile.signals_used++;
-                    userDb[currentLoggedUser] = profile;
-                    localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
-                    checkSubscriptionGate();
-                }
-
-                processAlgos(); 
-            }
-        }, 1000);
-
-        // ব্রাউজারে পেজটি প্রথমবার লোড হওয়ার সাথে সাথে সিস্টেম বুট হবে
-        window.onload = function() {
-            loadTradingViewAPI(currentAsset);
-            if (currentLoggedUser) {
-                bootDashboardEngine();
-            } else {
-                toggleAuthView(false);
-            }
-        };
+        // Initial setup on boot
+        if(currentLoggedUser) { bootDashboardEngine(); }
     </script>
 </body>
 </html>
