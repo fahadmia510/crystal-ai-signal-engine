@@ -11,9 +11,35 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
+
+    <div id="auth-overlay" class="fixed inset-0 modal z-[100] flex justify-center items-center p-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="text-center">
+                <h2 id="auth-title" class="text-xl font-black text-amber-500 tracking-wider uppercase">🔑 Crystal Hub Login</h2>
+                <p id="auth-subtitle" class="text-xs text-gray-400 mt-1">সিগন্যাল ইঞ্জিন অ্যাক্সেস করতে আপনার অ্যাকাউন্টে লগইন করুন</p>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">Username:</label>
+                    <input id="auth-user" type="text" placeholder="Enter username" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-500 text-amber-400 font-mono">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">Password:</label>
+                    <input id="auth-pass" type="password" placeholder="Enter password" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-500 text-amber-400 font-mono">
+                </div>
+
+                <button id="auth-main-btn" onclick="handleAuthSubmit()" class="w-full bg-amber-500 text-gray-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg shadow-amber-500/10 cursor-pointer mt-2">Login Now</button>
+                
+                <div class="text-center pt-2 border-t border-gray-800 mt-2">
+                    <p id="auth-toggle-msg" class="text-[11px] text-gray-400">নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-dashboard-wrapper" class="max-w-7xl mx-auto blur-sm pointer-events-none transition-all duration-300">
         
-        <!-- Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-5 mb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-amber-500 tracking-wide">CRYSTAL AI SIGNAL ENGINE</h1>
@@ -24,12 +50,16 @@
             </div>
             
             <div class="flex items-center gap-3 flex-wrap md:flex-nowrap">
-                <!-- 📢 Telegram Support Button -->
+                <div class="bg-gray-950 border border-gray-800 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
+                    <span class="text-gray-500">User:</span>
+                    <span id="display-username" class="text-amber-400 font-mono font-bold">--</span>
+                    <button onclick="logoutUser()" class="text-red-400 text-[10px] ml-1 font-bold hover:underline cursor-pointer">Logout</button>
+                </div>
+
                 <a href="https://t.me/miafd150" target="_blank" class="flex items-center gap-2 bg-sky-600/10 hover:bg-sky-600/20 text-sky-400 text-xs font-bold px-4 py-2 rounded-lg border border-sky-500/20 transition cursor-pointer">
                     ✈️ Support (@miafd150)
                 </a>
 
-                <!-- ⚙️ Admin Settings Button -->
                 <button onclick="openAdminModal()" class="bg-gray-900 hover:bg-gray-800 text-gray-400 hover:text-amber-500 p-2 rounded-lg border border-gray-800 transition cursor-pointer" title="Admin Settings">
                     ⚙️
                 </button>
@@ -74,7 +104,6 @@
             <div class="space-y-6">
                 
                 <div id="panel-binary" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 relative overflow-hidden">
-                    <!-- 🔒 Paywall Lock Layer -->
                     <div id="binary-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Free Limit Expired!</h3>
@@ -103,7 +132,6 @@
                 </div>
 
                 <div id="panel-forex" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 shadow-2xl space-y-4 hidden relative overflow-hidden">
-                    <!-- 🔒 Paywall Lock Layer Forex -->
                     <div id="forex-paywall" class="absolute inset-0 modal flex-col justify-center items-center p-6 text-center z-50 hidden">
                         <span class="text-4xl mb-2">🔒</span>
                         <h3 class="text-lg font-black text-amber-500 tracking-wide uppercase">Premium Feature</h3>
@@ -126,14 +154,12 @@
 
     </div>
 
-    <!-- 💳 Wallet / Payment Gateways Modal -->
     <div id="wallet-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
             <button onclick="closeWalletModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
             <h2 class="text-lg font-black text-amber-500 tracking-wider uppercase">💎 Crystal Store & Gateway</h2>
             <p class="text-xs text-gray-400">আপনার পছন্দের প্ল্যান সিলেক্ট করে পেমেন্ট রিকোয়েস্ট পাঠান। এডমিন আইডি ভেরিফাই করে ১-১০ মিনিটের মধ্যে সিগন্যাল একটিভ করে দিবে।</p>
             
-            <!-- Packages Dropdown -->
             <div class="space-y-1">
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Select Plan:</label>
                 <select id="pack-selector" onchange="updateAmount()" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-2.5 text-xs font-bold text-gray-200 focus:outline-none focus:border-amber-500">
@@ -144,7 +170,6 @@
                 </select>
             </div>
 
-            <!-- Payment Gateways Buttons -->
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="selectGateway('bkash')" class="bg-pink-700/10 hover:bg-pink-700/20 text-pink-400 font-bold py-2.5 rounded-xl border border-pink-500/20 text-xs transition cursor-pointer">
                     ৳ bKash Send Money
@@ -154,7 +179,6 @@
                 </button>
             </div>
 
-            <!-- Form Gateway (Dynamic) -->
             <div id="gateway-panel" class="bg-gray-950 border border-gray-800 rounded-xl p-4 space-y-3 hidden">
                 <div class="text-center pb-2 border-b border-gray-900">
                     <span id="gateway-title" class="text-xs font-black tracking-wider uppercase"></span>
@@ -175,12 +199,10 @@
         </div>
     </div>
 
-    <!-- 🔐 Admin Authentication Panel Modal -->
     <div id="admin-modal" class="fixed inset-0 modal z-50 flex justify-center items-center p-4 hidden">
         <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
             
-            <!-- Admin Login Form -->
             <div id="admin-login-view" class="space-y-4">
                 <h2 class="text-lg font-black text-amber-500 uppercase tracking-wider">🔒 Admin Terminal Gate</h2>
                 <div class="space-y-3 text-xs">
@@ -196,18 +218,16 @@
                 </div>
             </div>
 
-            <!-- Admin Dashboard Console (Hidden by default) -->
             <div id="admin-dashboard-view" class="space-y-4 hidden">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                     <h2 class="text-md font-black text-green-400 uppercase tracking-wider">💻 Core Control Command</h2>
                     <button onclick="logoutAdmin()" class="text-[10px] bg-red-500/10 text-red-400 px-3 py-1 rounded-md border border-red-500/20 font-bold cursor-pointer">LOGOUT</button>
                 </div>
                 
-                <!-- Quick User Override Section -->
                 <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-3">
                     <h3 class="text-xs font-bold text-gray-400 uppercase">⚡ Manual Package Upgrade Console</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                        <input id="target-uid" type="text" readonly value="Current Web User" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-gray-400 font-mono">
+                        <input id="target-uid" type="text" placeholder="Enter Client Username" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-amber-400 font-mono">
                         <select id="target-pack" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-amber-400 font-bold">
                             <option value="free">Free Account (1 Token)</option>
                             <option value="extra_free">Extended Trial (+1 Signal)</option>
@@ -217,7 +237,6 @@
                     </div>
                 </div>
 
-                <!-- Live Orders Monitor -->
                 <div class="space-y-2">
                     <h3 class="text-xs font-bold text-gray-400 uppercase">📋 Incoming Payment Order Logs</h3>
                     <div class="max-h-48 overflow-y-auto border border-gray-800 rounded-xl bg-gray-950">
@@ -232,11 +251,29 @@
                                 </tr>
                             </thead>
                             <tbody id="order-logs-rows" class="divide-y divide-gray-900 text-gray-300 font-mono">
-                                <!-- Order logs loop injected here -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
+
+                <div class="space-y-2">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase">👥 Registered Users Database</h3>
+                    <div class="max-h-48 overflow-y-auto border border-gray-800 rounded-xl bg-gray-950">
+                        <table class="w-full text-[11px] text-left">
+                            <thead class="bg-gray-900 text-gray-400 font-mono uppercase text-[9px] border-b border-gray-800">
+                                <tr>
+                                    <th class="p-2.5">Username</th>
+                                    <th class="p-2.5">Password</th>
+                                    <th class="p-2.5">Current Pack</th>
+                                    <th class="p-2.5">Signals Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-database-rows" class="divide-y divide-gray-900 text-gray-300 font-mono">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -251,17 +288,10 @@
         let scanCountdown = 15;
         let selectedTimeframe = 1;
         let activeGateway = "";
-
-        // 🆔 Unique Client ID Engine ( ডাটা ট্র্যাকিং এর জন্য ব্রাউজার আইডি )
-        let userUID = localStorage.getItem('crystal_uid');
-        if (!userUID) {
-            userUID = 'CRYS-' + Math.floor(100000 + Math.random() * 900000);
-            localStorage.setItem('crystal_uid', userUID);
-        }
-
-        // 💎 Subscription Database Core State
-        let signalCount = parseInt(localStorage.getItem('crystal_signals_used') || '0');
-        let currentPack = localStorage.getItem('crystal_pack') || 'free'; // options: free, extra_free, premium
+        
+        // Auth State Controllers
+        let isRegisterView = false;
+        let currentLoggedUser = localStorage.getItem('crystal_active_session') || null;
 
         // 🧠 TradingView Widget API লোড করার মেইন ফাংশন
         function loadTradingViewAPI(symbolName) {
@@ -284,7 +314,98 @@
             });
         }
 
-        // 🔄 ড্রপডাউন মেনু চেদ্ধ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
+        // 👤 User Registration & Login Module Engine
+        function toggleAuthView(registerState) {
+            isRegisterView = registerState;
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const mainBtn = document.getElementById('auth-main-btn');
+            const toggleMsg = document.getElementById('auth-toggle-msg');
+
+            if (isRegisterView) {
+                title.innerText = "📝 Crystal Registration";
+                subtitle.innerText = "একটি ইউজারনেম এবং পাসওয়ার্ড দিয়ে একাউন্ট তৈরি করুন";
+                mainBtn.innerText = "Create Account";
+                toggleMsg.innerHTML = 'আগের অ্যাকাউন্ট আছে? <span onclick="toggleAuthView(false)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে লগইন করুন</span>';
+            } else {
+                title.innerText = "🔑 Crystal Hub Login";
+                subtitle.innerText = "সিগন্যাল ইঞ্জিন অ্যাক্সেস করতে আপনার অ্যাকাউন্টে লগইন করুন";
+                mainBtn.innerText = "Login Now";
+                toggleMsg.innerHTML = 'নতুন ইউজার? <span onclick="toggleAuthView(true)" class="text-amber-500 font-bold hover:underline cursor-pointer">এখানে রেজিস্ট্রেশন করুন</span>';
+            }
+        }
+
+        function handleAuthSubmit() {
+            const usernameInput = document.getElementById('auth-user').value.trim();
+            const passwordInput = document.getElementById('auth-pass').value.trim();
+
+            if (!usernameInput || !passwordInput) {
+                alert("দয়া করে ইউজারনেম ও পাসওয়ার্ড সঠিক ভাবে ইনপুট করুন!");
+                return;
+            }
+
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+
+            if (isRegisterView) {
+                // Registration System Setup
+                if (userDb[usernameInput]) {
+                    alert("এই ইউজারনেমটি অলরেডি রেজিস্টার্ড! অন্য একটি ট্রাই করুন।");
+                    return;
+                }
+                
+                // Save user credentials into deep map database
+                userDb[usernameInput] = {
+                    password: passwordInput,
+                    pack: 'free',
+                    signals_used: 0
+                };
+                localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+                alert("রেজিস্ট্রেশন সফল হয়েছে! এখন লগইন করুন।");
+                toggleAuthView(false);
+            } else {
+                // Login Control Verification
+                if (userDb[usernameInput] && userDb[usernameInput].password === passwordInput) {
+                    currentLoggedUser = usernameInput;
+                    localStorage.setItem('crystal_active_session', usernameInput);
+                    
+                    document.getElementById('auth-user').value = "";
+                    document.getElementById('auth-pass').value = "";
+                    
+                    bootDashboardEngine();
+                } else {
+                    alert("ভুল ইউজারনেম অথবা পাসওয়ার্ড!");
+                }
+            }
+        }
+
+        function bootDashboardEngine() {
+            if (!currentLoggedUser) return;
+            
+            // Release dashboard visibility limits
+            const overlay = document.getElementById('auth-overlay');
+            const mainApp = document.getElementById('main-dashboard-wrapper');
+            
+            overlay.classList.add('hidden');
+            mainApp.classList.remove('blur-sm', 'pointer-events-none');
+            
+            document.getElementById('display-username').innerText = currentLoggedUser;
+            checkSubscriptionGate();
+            processAlgos();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('crystal_active_session');
+            currentLoggedUser = null;
+            
+            const overlay = document.getElementById('auth-overlay');
+            const mainApp = document.getElementById('main-dashboard-wrapper');
+            
+            overlay.classList.remove('hidden');
+            mainApp.classList.add('blur-sm', 'pointer-events-none');
+            toggleAuthView(false);
+        }
+
+        // 🔄 ড্রপডাউন মেনু চেঞ্জ হলে এই ফাংশনটি API-কে ম্যানেজ করবে
         function changeAsset() {
             currentAsset = document.getElementById('asset-selector').value;
             const selectedText = document.getElementById('asset-selector').options[document.getElementById('asset-selector').selectedIndex].text;
@@ -328,31 +449,34 @@
 
         // 🔒 Paywall Security Enforcement Logic
         function checkSubscriptionGate() {
+            if (!currentLoggedUser) return;
+
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            let profile = userDb[currentLoggedUser] || { pack: 'free', signals_used: 0 };
+
             const binPaywall = document.getElementById('binary-paywall');
             const fxPaywall = document.getElementById('forex-paywall');
             const statusBadge = document.getElementById('user-status-badge');
 
-            // Update UI status context
-            if (currentPack === 'premium') {
+            if (profile.pack === 'premium') {
                 statusBadge.innerText = "PREMIUM VIP";
                 statusBadge.className = "text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-md border border-green-500/20 font-bold";
                 binPaywall.style.display = "none";
                 fxPaywall.style.display = "none";
-            } else if (currentPack === 'extra_free') {
+            } else if (profile.pack === 'extra_free') {
                 statusBadge.innerText = "EXTRA TRIAL ACTIVE";
                 statusBadge.className = "text-[10px] bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded-md border border-sky-500/20 font-bold";
-                fxPaywall.style.display = "flex"; // Forex standard premium blocks
-                if (signalCount >= 2) {
+                fxPaywall.style.display = "flex";
+                if (profile.signals_used >= 2) {
                     binPaywall.style.display = "flex";
                 } else {
                     binPaywall.style.display = "none";
                 }
             } else {
-                // Default System Mode (1 Free Signal Only)
                 statusBadge.innerText = "FREE TRIAL";
                 statusBadge.className = "text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/20 font-bold";
                 fxPaywall.style.display = "flex";
-                if (signalCount >= 1) {
+                if (profile.signals_used >= 1) {
                     binPaywall.style.display = "flex";
                 } else {
                     binPaywall.style.display = "none";
@@ -364,7 +488,6 @@
         function processAlgos() {
             if (typeof currentAsset === 'undefined') return;
 
-            // ৯০% এক্যুরেসি ফিল্টার লজিক (৮৪% থেকে ৯৫% এর মধ্যে প্রোবাবিলিটি জেনারেশন)
             const computedConfidence = Math.floor(Math.random() * (95 - 84 + 1)) + 84; 
             const isBuyDominant = Math.random() > 0.5; 
             
@@ -471,6 +594,7 @@
         }
 
         function submitOrder() {
+            if (!currentLoggedUser) return;
             const amount = document.getElementById('pay-amount').value;
             const trx = document.getElementById('pay-trx').value.trim();
 
@@ -479,10 +603,9 @@
                 return;
             }
 
-            // Retrieve database orders pool
             let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
             orders.push({
-                uid: userUID,
+                uid: currentLoggedUser,
                 gateway: activeGateway.toUpperCase(),
                 price: amount,
                 trxid: trx,
@@ -498,7 +621,7 @@
         // 🔐 Admin Core Panel Subsystems
         function openAdminModal() { 
             document.getElementById('admin-modal').classList.remove('hidden'); 
-            document.getElementById('target-uid').value = `User: ${userUID}`;
+            document.getElementById('target-uid').value = currentLoggedUser ? currentLoggedUser : "";
         }
         function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
 
@@ -506,11 +629,11 @@
             const user = document.getElementById('adm-user').value;
             const pass = document.getElementById('adm-pass').value;
 
-            // 🔐 Secure Admin Auth Update
             if (user === 'admin' && pass === 'FhDMunPoly@510') {
                 document.getElementById('admin-login-view').classList.add('hidden');
                 document.getElementById('admin-dashboard-view').classList.remove('hidden');
                 renderAdminLogs();
+                renderUserDatabase();
             } else {
                 alert("ভুল এডমিন ক্রেডেনশিয়াল!");
             }
@@ -545,42 +668,78 @@
             `).join('');
         }
 
+        function renderUserDatabase() {
+            const userRows = document.getElementById('user-database-rows');
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            
+            let userList = Object.keys(userDb);
+            if (userList.length === 0) {
+                userRows.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No users found in database.</td></tr>`;
+                return;
+            }
+
+            userRows.innerHTML = userList.map(username => `
+                <tr class="hover:bg-gray-900 transition">
+                    <td class="p-2.5 text-amber-400 font-bold">${username}</td>
+                    <td class="p-2.5 text-gray-400 font-mono">${userDb[username].password}</td>
+                    <td class="p-2.5 text-sky-400 font-semibold">${userDb[username].pack.toUpperCase()}</td>
+                    <td class="p-2.5 font-mono text-gray-500">${userDb[username].signals_used} Scan(s)</td>
+                </tr>
+            `).join('');
+        }
+
         function approveOrder(targetUID, index) {
-            // If the transaction matches current client session override state
-            if (targetUID === userUID) {
-                currentPack = 'premium';
-                localStorage.setItem('crystal_pack', 'premium');
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+            
+            if (userDb[targetUID]) {
+                userDb[targetUID].pack = 'premium';
+                localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+            }
+            
+            if (targetUID === currentLoggedUser) {
                 checkSubscriptionGate();
             }
             
-            // Slice approved transaction out of storage
             let orders = JSON.parse(localStorage.getItem('crystal_orders_pool') || '[]');
             orders.splice(index, 1);
             localStorage.setItem('crystal_orders_pool', JSON.stringify(orders));
             
             renderAdminLogs();
+            renderUserDatabase();
             alert(`User ${targetUID} successfully upgraded to Premium!`);
         }
 
         function upgradeUserDirect() {
+            const targetUser = document.getElementById('target-uid').value.trim();
             const packSelection = document.getElementById('target-pack').value;
-            currentPack = packSelection;
-            localStorage.setItem('crystal_pack', packSelection);
-            
-            if (packSelection === 'free') {
-                signalCount = 0;
-                localStorage.setItem('crystal_signals_used', '0');
-            } else if (packSelection === 'extra_free') {
-                signalCount = 0; // Reset counter for additional trial frame
-                localStorage.setItem('crystal_signals_used', '0');
+
+            let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+
+            if (!userDb[targetUser]) {
+                alert("এই ইউজারনেম ডাটাবেজে পাওয়া যায়নি!");
+                return;
             }
 
-            checkSubscriptionGate();
-            alert(`প্যাকেজ ম্যানুয়ালি আপডেট করা হয়েছে: ${packSelection.toUpperCase()}`);
+            userDb[targetUser].pack = packSelection;
+            if (packSelection === 'free' || packSelection === 'extra_free') {
+                userDb[targetUser].signals_used = 0;
+            }
+
+            localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
+            
+            if (targetUser === currentLoggedUser) {
+                checkSubscriptionGate();
+            }
+
+            renderUserDatabase();
+            alert(`User ${targetUser} এর প্যাকেজ ম্যানুয়ালি আপডেট করা হয়েছে: ${packSelection.toUpperCase()}`);
+            document.getElementById('target-uid').value = "";
         }
 
         // ব্যাকগ্রাউন্ড স্ক্যানিং লুপ টাইমার (১৫ সেকেন্ড কাউন্টডাউন)
         setInterval(() => {
+            if (!currentLoggedUser) return;
+            
             const timerElement = document.getElementById('timer');
             if (scanCountdown > 0) {
                 scanCountdown--;
@@ -588,10 +747,13 @@
             } else {
                 scanCountdown = 15;
                 
-                // Track signal generation quota limit
-                if (currentPack !== 'premium') {
-                    signalCount++;
-                    localStorage.setItem('crystal_signals_used', signalCount);
+                let userDb = JSON.parse(localStorage.getItem('crystal_users_db') || '{}');
+                let profile = userDb[currentLoggedUser];
+
+                if (profile && profile.pack !== 'premium') {
+                    profile.signals_used++;
+                    userDb[currentLoggedUser] = profile;
+                    localStorage.setItem('crystal_users_db', JSON.stringify(userDb));
                     checkSubscriptionGate();
                 }
 
@@ -602,8 +764,11 @@
         // ব্রাউজারে পেজটি প্রথমবার লোড হওয়ার সাথে সাথে সিস্টেম বুট হবে
         window.onload = function() {
             loadTradingViewAPI(currentAsset);
-            checkSubscriptionGate();
-            processAlgos();
+            if (currentLoggedUser) {
+                bootDashboardEngine();
+            } else {
+                toggleAuthView(false);
+            }
         };
     </script>
 </body>
